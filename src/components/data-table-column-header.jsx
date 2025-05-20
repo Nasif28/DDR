@@ -1,26 +1,23 @@
+"use client";
+
 import {
   ChevronDown,
-  ChevronDownIcon,
   ChevronUp,
-  ChevronUpIcon,
   ChevronsUpDown,
-  ChevronsUpDownIcon,
+  Check,
   EyeOff,
   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuContent,
   DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
+} from "@/components/ui/dropdown-menu";
 
 export function DataTableColumnHeader({ column, title, className, ...props }) {
-  if (!column.getCanSort() && !column.getCanHide()) {
-    return <div className={cn(className)}>{title}</div>;
-  }
+  const isSorted = column.getIsSorted(); // 'asc' | 'desc' | false
 
   return (
     <DropdownMenu>
@@ -33,53 +30,64 @@ export function DataTableColumnHeader({ column, title, className, ...props }) {
       >
         {title}
         {column.getCanSort() &&
-          (column.getIsSorted() === "desc" ? (
-            <ChevronDownIcon />
-          ) : column.getIsSorted() === "asc" ? (
-            <ChevronUpIcon />
+          (isSorted === "desc" ? (
+            <ChevronDown />
+          ) : isSorted === "asc" ? (
+            <ChevronUp />
           ) : (
-            <ChevronsUpDownIcon />
+            <ChevronsUpDown />
           ))}
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="w-28">
+
+      <DropdownMenuContent align="start" className="w-32">
         {column.getCanSort() && (
           <>
-            <DropdownMenuCheckboxItem
-              className="relative pr-8 pl-2 [&>span:first-child]:right-2 [&>span:first-child]:left-auto [&_svg]:text-muted-foreground"
-              checked={column.getIsSorted() === "asc"}
-              onClick={() => column.toggleSorting(false)}
+            {/* Sort Asc */}
+            <DropdownMenuItem
+              onClick={() => column.setSorting(false)}
+              className="flex items-center justify-between"
             >
-              <ChevronUp />
-              Asc
-            </DropdownMenuCheckboxItem>
-            <DropdownMenuCheckboxItem
-              className="relative pr-8 pl-2 [&>span:first-child]:right-2 [&>span:first-child]:left-auto [&_svg]:text-muted-foreground"
-              checked={column.getIsSorted() === "desc"}
-              onClick={() => column.toggleSorting(true)}
+              <div className="flex items-center gap-2">
+                <ChevronUp className="w-4 h-4" />
+                Asc
+              </div>
+              {isSorted === "asc" && <Check className="w-4 h-4" />}
+            </DropdownMenuItem>
+
+            {/* Sort Desc */}
+            <DropdownMenuItem
+              onClick={() => column.setSorting(true)}
+              className="flex items-center justify-between"
             >
-              <ChevronDown />
-              Desc
-            </DropdownMenuCheckboxItem>
-            {column.getIsSorted() && (
+              <div className="flex items-center gap-2">
+                <ChevronDown className="w-4 h-4" />
+                Desc
+              </div>
+              {isSorted === "desc" && <Check className="w-4 h-4" />}
+            </DropdownMenuItem>
+
+            {/* Reset sort */}
+            {isSorted && (
               <DropdownMenuItem
-                className="pl-2 [&_svg]:text-muted-foreground"
                 onClick={() => column.clearSorting()}
+                className="flex items-center gap-2"
               >
-                <X />
-                Reset
+                <X className="w-4 h-4" />
+                Clear
               </DropdownMenuItem>
             )}
           </>
         )}
+
+        {/* Column visibility */}
         {column.getCanHide() && (
-          <DropdownMenuCheckboxItem
-            className="relative pr-8 pl-2 [&>span:first-child]:right-2 [&>span:first-child]:left-auto [&_svg]:text-muted-foreground"
-            checked={!column.getIsVisible()}
+          <DropdownMenuItem
             onClick={() => column.toggleVisibility(false)}
+            className="flex items-center gap-2"
           >
-            <EyeOff />
+            <EyeOff className="w-4 h-4" />
             Hide
-          </DropdownMenuCheckboxItem>
+          </DropdownMenuItem>
         )}
       </DropdownMenuContent>
     </DropdownMenu>

@@ -4,7 +4,7 @@ const API_URL = "https://681ed227c1c291fa66353a6f.mockapi.io/api/v1/report";
 
 export const fetchBills = async ({
   page = 1,
-  limit = 10,
+  limit = 30,
   sortBy,
   order,
   filters = {},
@@ -18,8 +18,7 @@ export const fetchBills = async ({
   };
 
   const res = await axios.get(API_URL, { params });
-  const totalCount = Number(res.headers["x-total-count"] || res.data.length); // fallback for local/mock
-
+  const totalCount = Number(res.headers["x-total-count"] || res.data.length); 
   return {
     items: res.data,
     totalCount,

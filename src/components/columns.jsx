@@ -31,7 +31,7 @@ export const columns = [
 
   ...[
     { key: "slNo", label: "SL" },
-    { key: "dueDays", label: "Due Days" },
+    { key: "dueDays", label: "Due Days"},
     { key: "concernPerson", label: "Concern Person" },
     { key: "accountHolder", label: "Account Holder" },
     { key: "customerStatus", label: "Status" },
@@ -59,5 +59,6 @@ export const columns = [
     cell: ({ row }) => row.getValue(col.key),
     enableSorting: true,
     enableHiding: true,
+    enableColumnFilter: true,
   })),
 ];

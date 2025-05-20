@@ -46,11 +46,10 @@ export default function DataTable({ columns }) {
     return saved ? JSON.parse(saved) : {};
   });
   const [rowSelection, setRowSelection] = useState({});
+  const [sorting, setSorting] = useState([]);
   const [sortParam, setSortParam] = useQueryState("sort");
-  const [sorting, setSorting] = useState(() => {
-    return sortParam ? [{ id: sortParam, desc: orderParam === "desc" }] : [];
-  });
   const [orderParam, setOrderParam] = useQueryState("order");
+
   const [pageIndexParam, setPageIndexParam] = useQueryState("page");
   const [pagination, setPagination] = useState({
     pageIndex: Number(pageIndexParam) || 0,
@@ -71,6 +70,11 @@ export default function DataTable({ columns }) {
     localStorage.setItem("columnOrder", JSON.stringify(columnOrder));
   }, [columnOrder]);
 
+  const filterOptions = async () => {
+    const res = await fetch("/filters");
+    const data = await res.json();
+    return data;
+  };
   useEffect(() => {
     const fetchData = async () => {
       const filters = {
@@ -103,7 +107,7 @@ export default function DataTable({ columns }) {
       rowSelection,
       sorting,
       columnOrder,
-      columnSizing,
+      // columnSizing,
       pagination,
     },
     onGlobalFilterChange: setGlobalFilter,
@@ -123,6 +127,7 @@ export default function DataTable({ columns }) {
         setOrderParam(null);
       }
     },
+
     onPaginationChange: (updater) => {
       const newPagination =
         typeof updater === "function" ? updater(pagination) : updater;
@@ -132,22 +137,25 @@ export default function DataTable({ columns }) {
     manualPagination: true,
     pageCount: Math.ceil(totalCount / pagination.pageSize),
     onColumnOrderChange: setColumnOrder,
-    onColumnSizingChange: setColumnSizing,
+    // onColumnSizingChange: setColumnSizing,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     enableRowSelection: true,
-    enableColumnResizing: true,
-    columnResizeMode: "onChange",
+    // enableColumnResizing: true,
+    // columnResizeMode: "onChange",
   });
+
+  useEffect(() => {
+    console.log("SORTING changed", sorting);
+  }, [sorting]);
 
   return (
     <div className="space-y-2">
-      <ColumnFilters table={table} />
+      <ColumnFilters table={table} filterOptionsFromAPI={filterOptions} />
       <TableToolbar table={table} columns={columns} />
-      {/* <RowSelectionToolbar table={table} columns={columns} /> */}
 
       <div className="rounded-md border overflow-x-auto">
         <Table>
@@ -171,10 +179,10 @@ export default function DataTable({ columns }) {
                         header.column.columnDef.header,
                         header.getContext()
                       )}
-                      {{
+                      {/* {{
                         asc: " ↑",
                         desc: " ↓",
-                      }[header.column.getIsSorted()] ?? null}
+                      }[header.column.getIsSorted()] ?? null} */}
                     </div>
 
                     {header.column.getCanResize() && (
