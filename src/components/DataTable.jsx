@@ -17,14 +17,10 @@ import {
   TableBody,
   TableCell,
 } from "@/components/ui/table";
-import GlobalSearch from "./GlobalSearch";
 import PaginationControls from "./PaginationControls";
-import ColumnVisibilityToggle from "./ColumnVisibilityToggle";
-import ExportButtons from "./ExportButtons";
 import { fetchBills } from "@/lib/api";
 import { useQueryState } from "nuqs";
 import ColumnFilters from "./ColumnFilters";
-import { Input } from "./ui/input";
 import RowSelectionToolbar from "./RowSelectionToolbar";
 import TableToolbar from "./TableToolbar";
 import { cn } from "@/lib/utils";
@@ -49,7 +45,7 @@ export default function DataTable({ columns }) {
   const [sorting, setSorting] = useState([]);
   const [sortParam, setSortParam] = useQueryState("sort");
   const [orderParam, setOrderParam] = useQueryState("order");
-
+  const [search] = useQueryState("search");
   const [pageIndexParam, setPageIndexParam] = useQueryState("page");
   const [pagination, setPagination] = useState({
     pageIndex: Number(pageIndexParam) || 0,
@@ -84,6 +80,7 @@ export default function DataTable({ columns }) {
       };
 
       const res = await fetchBills({
+        search,
         sortBy: sorting[0]?.id,
         order: sorting[0]?.desc ? "desc" : "asc",
         page: pagination.pageIndex + 1,
@@ -107,7 +104,7 @@ export default function DataTable({ columns }) {
       rowSelection,
       sorting,
       columnOrder,
-      // columnSizing,
+      columnSizing,
       pagination,
     },
     onGlobalFilterChange: setGlobalFilter,
@@ -138,15 +135,15 @@ export default function DataTable({ columns }) {
     manualPagination: true,
     pageCount: Math.ceil(totalCount / pagination.pageSize),
     onColumnOrderChange: setColumnOrder,
-    // onColumnSizingChange: setColumnSizing,
+    onColumnSizingChange: setColumnSizing,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     enableRowSelection: true,
-    // enableColumnResizing: true,
-    // columnResizeMode: "onChange",
+    enableColumnResizing: true,
+    columnResizeMode: "onChange",
   });
 
   useEffect(() => {
@@ -154,18 +151,21 @@ export default function DataTable({ columns }) {
   }, [sorting]);
 
   return (
-    <div className="space-y-2">
-      <ColumnFilters table={table} filterOptionsFromAPI={filterOptions} />
-      <TableToolbar table={table} columns={columns} />
+    <div className="flex flex-col space-y-2 max-h-[calc(100vh-90px)]">
+      <div className="sticky top-0 z-10 space-y-2">
+        <ColumnFilters table={table} filterOptionsFromAPI={filterOptions} />
+        <TableToolbar table={table} columns={columns} />
+      </div>
 
-      <div className="rounded-md border overflow-x-auto">
-        <Table>
+      <div className="flex-1 overflow-y-auto border rounded-md">
+        <Table className="table-fixed w-full">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup, i) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <TableHead
                     key={header.id}
+                    className="sticky top-0 z-10"
                     style={{ width: header.getSize() }}
                     colSpan={header.colSpan}
                   >
@@ -186,6 +186,19 @@ export default function DataTable({ columns }) {
                       <div
                         onMouseDown={header.getResizeHandler()}
                         onTouchStart={header.getResizeHandler()}
+                        onDoubleClick={(e) => {
+                          e.stopPropagation();
+
+                          const columnId = header.column.id;
+                          const defaultSize =
+                            header.column.columnDef.meta?.defaultSize;
+                          if (defaultSize != null) {
+                            table.setColumnSizing((old) => ({
+                              ...old,
+                              [columnId]: defaultSize,
+                            }));
+                          }
+                        }}
                         className="resizer w-1 h-full cursor-col-resize bg-muted absolute right-0 top-0"
                       />
                     )}
@@ -209,14 +222,10 @@ export default function DataTable({ columns }) {
         </Table>
       </div>
 
-      <div className="flex flex-col gap-2.5">
+      <div className="sticky bottom-0 z-10 space-y-2">
         <PaginationControls table={table} />
-        {/* {actionBar &&
-          table.getFilteredSelectedRowModel().rows.length > 0 &&
-          actionBar} */}
+        <RowSelectionToolbar table={table} columns={columns} />
       </div>
-
-      <RowSelectionToolbar table={table} columns={columns} />
     </div>
   );
 }
