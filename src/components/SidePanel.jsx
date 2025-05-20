@@ -37,7 +37,7 @@ const SidePanel = () => {
   //   }`;
 
   return (
-    <Sidebar collapsible="icon" className="bg-white dark:bg-gray-800">
+    <Sidebar collapsible="icon">
       {/* <SidebarHeader className="flex items-center justify-center h-20 transition-all duration-300 ">
         <img
           src={collapsed === true ? "/fabicon.png" : "/images/logo.gif"}

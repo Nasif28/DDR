@@ -147,7 +147,7 @@ export default function DataTable({ columns }) {
     <div className="space-y-2">
       <ColumnFilters table={table} />
       <TableToolbar table={table} columns={columns} />
-      <RowSelectionToolbar table={table} columns={columns} />
+      {/* <RowSelectionToolbar table={table} columns={columns} /> */}
 
       <div className="rounded-md border overflow-x-auto">
         <Table>
@@ -210,6 +210,8 @@ export default function DataTable({ columns }) {
           table.getFilteredSelectedRowModel().rows.length > 0 &&
           actionBar} */}
       </div>
+
+      <RowSelectionToolbar table={table} columns={columns} />
     </div>
   );
 }
