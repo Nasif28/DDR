@@ -111,6 +111,7 @@ export default function DataTable({ columns }) {
       pagination,
     },
     onGlobalFilterChange: setGlobalFilter,
+    manualFiltering: true,
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
     onSortingChange: (updater) => {
