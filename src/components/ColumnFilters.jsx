@@ -106,7 +106,7 @@ export default function ColumnFilters({ table, filterOptionsFromAPI }) {
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-8 gap-4 mb-4">
+    <div className="grid grid-cols-1 md:grid-cols-8 gap-2">
       {/* Date Picker */}
       <div className="flex flex-col">
         <label className="text-sm mb-1">Date</label>

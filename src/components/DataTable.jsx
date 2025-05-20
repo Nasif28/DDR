@@ -179,10 +179,6 @@ export default function DataTable({ columns }) {
                         header.column.columnDef.header,
                         header.getContext()
                       )}
-                      {/* {{
-                        asc: " ↑",
-                        desc: " ↓",
-                      }[header.column.getIsSorted()] ?? null} */}
                     </div>
 
                     {header.column.getCanResize() && (

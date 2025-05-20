@@ -79,7 +79,7 @@ export default function RowSelectionToolbar({ table, columns }) {
           exit={{ opacity: 0, y: 20 }}
           transition={{ duration: 0.2, ease: "easeInOut" }}
           className={cn(
-            "fixed inset-x-0 bottom-4 z-50 mx-auto flex w-fit flex-wrap items-center justify-center gap-2 rounded-sm border py-2 text-foreground shadow-sm",
+            "fixed inset-x-0 bottom-4 z-50 mx-auto flex w-fit bg-background flex-wrap items-center justify-center gap-2 rounded-sm border py-2 text-foreground shadow-sm",
             "sm:px-4"
           )}
         >
