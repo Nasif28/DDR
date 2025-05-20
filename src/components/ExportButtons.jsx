@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Download } from "lucide-react";
 import * as XLSX from "xlsx";
 
 export default function ExportButtons({ data }) {
@@ -9,5 +10,9 @@ export default function ExportButtons({ data }) {
     XLSX.writeFile(workbook, "data.xlsx");
   };
 
-  return <Button onClick={handleExport}>Export to Excel</Button>;
+  return (
+    <Button variant="outline" onClick={handleExport}>
+      <Download /> Export to Excel
+    </Button>
+  );
 }

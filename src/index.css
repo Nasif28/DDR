@@ -118,3 +118,13 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* @plugin 'tailwind-scrollbar'; */
+
+html {
+  scroll-behavior: smooth;
+}
+
+.resizer {
+  touch-action: none;
+}
