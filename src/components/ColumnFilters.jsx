@@ -22,7 +22,6 @@ import {
 import { useQueryState } from "nuqs";
 
 export default function ColumnFilters({ table, filterOptionsFromAPI }) {
-  // 🟡 Query-bound filter states
   const [filterDate, setFilterDate] = useQueryState("date");
   const [dueDays, setDueDays] = useQueryState("dueDays");
   const [balanceMin, setBalanceMin] = useQueryState("balanceMin");
@@ -34,7 +33,6 @@ export default function ColumnFilters({ table, filterOptionsFromAPI }) {
   const [customerName, setCustomerName] = useQueryState("customerName");
   const [vehicleModel, setVehicleModel] = useQueryState("vehicleModel");
 
-  // 🟢 Sync to TanStack columnFilters
   useEffect(() => {
     const filters = [];
 

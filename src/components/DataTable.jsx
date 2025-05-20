@@ -36,11 +36,11 @@ export default function DataTable({ columns }) {
     const saved = localStorage.getItem("columnOrder");
     return saved ? JSON.parse(saved) : [];
   });
-
-  const [columnSizing, setColumnSizing] = useState(() => {
-    const saved = localStorage.getItem("columnSizing");
-    return saved ? JSON.parse(saved) : {};
-  });
+  // const [columnSizing, setColumnSizing] = useState(() => {
+  //   const saved = localStorage.getItem("columnSizing");
+  //   return saved ? JSON.parse(saved) : {};
+  // });
+  const [columnSizing, setColumnSizing] = useState("columnSizing");
   const [rowSelection, setRowSelection] = useState({});
   const [sorting, setSorting] = useState([]);
   const [sortParam, setSortParam] = useQueryState("sort");
@@ -171,7 +171,7 @@ export default function DataTable({ columns }) {
                   >
                     <div
                       className={cn("flex items-center justify-between", {
-                        "cursor-pointer select-none":
+                        "cursor-pointer select-none truncate max-w-full overflow-hidden text-ellipsis":
                           header.column.getCanSort(),
                       })}
                       onClick={header.column.getToggleSortingHandler()}
@@ -213,7 +213,12 @@ export default function DataTable({ columns }) {
               <TableRow key={row.id}>
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    <div className="truncate max-w-full overflow-hidden text-ellipsis">
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </div>
                   </TableCell>
                 ))}
               </TableRow>
