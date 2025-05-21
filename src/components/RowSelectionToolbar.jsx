@@ -20,6 +20,8 @@ export default function RowSelectionToolbar({ table, columns }) {
   const selectedRows = table.getFilteredSelectedRowModel().rows;
   const selectedData = selectedRows.map((row) => row.original);
 
+  const visibleColumns = columns.filter((col) => col.columnDef.accessorKey);
+
   useLayoutEffect(() => {
     setMounted(true);
   }, []);
@@ -41,7 +43,16 @@ export default function RowSelectionToolbar({ table, columns }) {
   };
 
   const handleExport = () => {
-    const worksheet = XLSX.utils.json_to_sheet(selectedData);
+    const filteredData = selectedData.map((row) => {
+      const filtered = {};
+      visibleColumns.forEach((col) => {
+        const key = col.columnDef.accessorKey;
+        if (key) filtered[key] = row[key];
+      });
+      return filtered;
+    });
+
+    const worksheet = XLSX.utils.json_to_sheet(filteredData);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Selected");
     XLSX.writeFile(workbook, "selected-rows.xlsx");
@@ -49,14 +60,57 @@ export default function RowSelectionToolbar({ table, columns }) {
   };
 
   const handlePrint = () => {
-    const printable = window.open("", "_blank");
-    printable.document.write("<html><head><title>Print</title></head><body>");
-    printable.document.write(
-      `<pre>${JSON.stringify(selectedData, null, 2)}</pre>`
-    );
-    printable.document.write("</body></html>");
-    printable.document.close();
-    printable.print();
+    const printWindow = window.open("", "_blank", "width=800,height=600");
+
+    const tableHeaders = visibleColumns
+      .map((col) => {
+        const label = col.columnDef.meta?.label ?? col.columnDef.accessorKey;
+        return `<th style="border: 1px solid #ccc; padding: 6px">${label}</th>`;
+      })
+      .join("");
+
+    const tableRows = selectedData
+      .map((row) => {
+        const cells = visibleColumns
+          .map((col) => {
+            const key = col.columnDef.accessorKey;
+            return `<td style="border: 1px solid #ccc; padding: 6px">${
+              row[key] ?? ""
+            }</td>`;
+          })
+          .join("");
+        return `<tr>${cells}</tr>`;
+      })
+      .join("");
+
+    const html = `
+      <html>
+        <head>
+          <title>Print Selected</title>
+          <style>
+            body { font-family: sans-serif; padding: 20px; }
+            h2 { margin-bottom: 1rem; }
+            table { border-collapse: collapse; width: 100%; }
+            th, td { font-size: 14px; }
+          </style>
+        </head>
+        <body>
+          <h2>Selected Rows</h2>
+          <table>
+            <thead><tr>${tableHeaders}</tr></thead>
+            <tbody>${tableRows}</tbody>
+          </table>
+          <script>
+            window.onload = function () {
+              window.print();
+            };
+          </script>
+        </body>
+      </html>
+    `;
+
+    printWindow.document.write(html);
+    printWindow.document.close();
   };
 
   const handleDelete = () => {
@@ -115,19 +169,13 @@ export default function RowSelectionToolbar({ table, columns }) {
 
           <Separator orientation="vertical" className="h-5" />
 
-          {/* Action Buttons */}
           <Tooltip>
             <TooltipTrigger asChild>
               <Button variant="secondary" size="icon" onClick={handleExport}>
                 <Download className="size-3.5" />
               </Button>
             </TooltipTrigger>
-            <TooltipContent
-              sideOffset={7}
-              className="flex items-center gap-2 border bg-accent px-2 py-1.5 font-semibold text-foreground dark:bg-zinc-900 [&>span]:hidden"
-            >
-              Export Selected
-            </TooltipContent>
+            <TooltipContent>Export Selected</TooltipContent>
           </Tooltip>
 
           <Tooltip>
@@ -136,12 +184,7 @@ export default function RowSelectionToolbar({ table, columns }) {
                 <Printer className="size-3.5" />
               </Button>
             </TooltipTrigger>
-            <TooltipContent
-              sideOffset={7}
-              className="flex items-center gap-2 border bg-accent px-2 py-1.5 font-semibold text-foreground dark:bg-zinc-900 [&>span]:hidden"
-            >
-              Print Selected
-            </TooltipContent>
+            <TooltipContent>Print Selected</TooltipContent>
           </Tooltip>
 
           <Tooltip>
@@ -150,12 +193,7 @@ export default function RowSelectionToolbar({ table, columns }) {
                 <Trash2 className="size-3.5" />
               </Button>
             </TooltipTrigger>
-            <TooltipContent
-              sideOffset={7}
-              className="flex items-center gap-2 border bg-accent px-2 py-1.5 font-semibold text-foreground dark:bg-zinc-900 [&>span]:hidden"
-            >
-              Delete Selected
-            </TooltipContent>
+            <TooltipContent>Delete Selected</TooltipContent>
           </Tooltip>
         </motion.div>
       )}

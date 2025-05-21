@@ -187,6 +187,8 @@ export default function DataTable({ columns }) {
     columnResizeMode: "onChange",
   });
 
+  const visibleColumns = table.getVisibleLeafColumns();
+
   useEffect(() => {
     console.log("SORTING changed", sorting);
   }, [sorting]);
@@ -195,7 +197,7 @@ export default function DataTable({ columns }) {
     <div className="flex flex-col space-y-2 max-h-[calc(100vh-90px)]">
       <div className="sticky top-0 z-10 space-y-2">
         <ColumnFilters table={table} filterOptions={filterOptionsData} />
-        <TableToolbar table={table} columns={columns} />
+        <TableToolbar table={table} columns={visibleColumns} />
       </div>
 
       <div className="flex-1 overflow-auto border rounded-md">
@@ -266,7 +268,7 @@ export default function DataTable({ columns }) {
 
       <div className="sticky bottom-0 z-10 space-y-2">
         <PaginationControls table={table} />
-        <RowSelectionToolbar table={table} columns={columns} />
+        <RowSelectionToolbar table={table} columns={visibleColumns} />
       </div>
     </div>
   );

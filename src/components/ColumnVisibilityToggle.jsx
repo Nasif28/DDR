@@ -37,12 +37,11 @@ export default function ColumnVisibilityToggle({ table }) {
           aria-label="Toggle columns"
           role="combobox"
           variant="outline"
-          size="sm"
-          className="ml-auto hidden h-8 lg:flex"
+          className="ml-auto "
         >
           <Settings2 className="mr-1" />
           View
-          <ChevronsUpDown className="ml-1 opacity-50" />
+          <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
 

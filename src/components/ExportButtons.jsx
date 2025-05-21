@@ -5,12 +5,24 @@ import { Download, Loader } from "lucide-react";
 import * as XLSX from "xlsx";
 import { useTransition } from "react";
 
-export default function ExportButtons({ data }) {
+export default function ExportButtons({ data, columns }) {
   const [isPending, startTransition] = useTransition();
 
   const handleExport = () => {
     startTransition(() => {
-      const worksheet = XLSX.utils.json_to_sheet(data);
+      console.log(data, columns);
+      const exportData = data.map((row) => {
+        const filtered = {};
+        columns.forEach((col) => {
+          const key = col.columnDef.accessorKey;
+          if (key) {
+            filtered[key] = row[key];
+          }
+        });
+        return filtered;
+      });
+
+      const worksheet = XLSX.utils.json_to_sheet(exportData);
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
       const today = new Date().toISOString().split("T")[0];

@@ -10,27 +10,29 @@ export default function PrintButton({ data, columns }) {
   const handlePrint = () => {
     startTransition(() => {
       const printWindow = window.open("", "_blank", "width=800,height=600");
-console.log(columns)
-      const tableHeaders = columns
-        .filter((col) => col.accessorKey)
-        .map(
-          (col) =>
-            `<th style="border: 1px solid #ccc; padding: 6px">${
-              col?.meta?.label ?? col.accessorKey
-            }</th>`
-        )
+
+      // Use only visible columns with accessorKey
+      const visibleColumns = columns.filter(
+        (col) => col.getIsVisible?.() && col.columnDef.accessorKey
+      );
+
+      const tableHeaders = visibleColumns
+        .map((col) => {
+          const key = col.columnDef.accessorKey;
+          const label = col.columnDef.meta?.label ?? key;
+          return `<th style="border: 1px solid #ccc; padding: 6px">${label}</th>`;
+        })
         .join("");
 
       const tableRows = data
         .map((row) => {
-          const cells = columns
-            .filter((col) => col.accessorKey)
-            .map(
-              (col) =>
-                `<td style="border: 1px solid #ccc; padding: 6px">${
-                  row[col.accessorKey] ?? ""
-                }</td>`
-            )
+          const cells = visibleColumns
+            .map((col) => {
+              const key = col.columnDef.accessorKey;
+              return `<td style="border: 1px solid #ccc; padding: 6px">${
+                row[key] ?? ""
+              }</td>`;
+            })
             .join("");
           return `<tr>${cells}</tr>`;
         })
@@ -38,14 +40,26 @@ console.log(columns)
 
       const html = `
         <html>
-          <head><title>Print Table</title></head>
+          <head>
+            <title>Print Table</title>
+            <style>
+              body { font-family: sans-serif; padding: 20px; }
+              h2 { margin-bottom: 1rem; }
+              table { border-collapse: collapse; width: 100%; }
+              th, td { font-size: 14px; }
+            </style>
+          </head>
           <body>
             <h2>Billing Table</h2>
-            <table style="border-collapse: collapse; width: 100%;">
+            <table>
               <thead><tr>${tableHeaders}</tr></thead>
               <tbody>${tableRows}</tbody>
             </table>
-            <script>window.onload = function () { window.print(); }</script>
+            <script>
+              window.onload = function () {
+                window.print();
+              };
+            </script>
           </body>
         </html>
       `;
