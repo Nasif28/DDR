@@ -60,6 +60,8 @@ export default function DataTable({ columns }) {
   const [accountHolder] = useQueryState("accountHolder");
   const [concernPerson] = useQueryState("concernPerson");
   const [date] = useQueryState("date");
+  const [dueDays] = useQueryState("dueDays");
+  const [idNo] = useQueryState("idNo");
   const [filterOptionsData, setFilterOptionsData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
@@ -91,6 +93,8 @@ export default function DataTable({ columns }) {
         ...(accountHolder && { accountHolder }),
         ...(concernPerson && { concernPerson }),
         ...(date && { date }),
+        ...(dueDays && { dueDays }),
+        ...(idNo && { idNo }),
       };
 
       const res = await fetchBills({

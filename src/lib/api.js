@@ -9,12 +9,14 @@ export const fetchBills = async ({
   sortBy,
   order,
   filters = {},
+  search,
 }) => {
   const params = {
     page,
     limit,
     ...(sortBy && { sortBy }),
     ...(order && { order }),
+    search,
     ...filters,
   };
 

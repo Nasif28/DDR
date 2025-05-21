@@ -5,7 +5,7 @@ export async function getFilterOptions() {
   const res = await axios.get(API_URL, {
     params: {
       page: 1,
-      limit: 1000, // or whatever is safe
+      limit: 1000,
     },
   });
 
