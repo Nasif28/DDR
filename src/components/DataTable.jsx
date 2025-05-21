@@ -46,13 +46,13 @@ export default function DataTable({ columns }) {
   const [sorting, setSorting] = useState([]);
   const [sortParam, setSortParam] = useQueryState("sort");
   const [orderParam, setOrderParam] = useQueryState("order");
-  const [search] = useQueryState("search");
   const [pageIndexParam, setPageIndexParam] = useQueryState("page");
   const [pagination, setPagination] = useState({
     pageIndex: Number(pageIndexParam) || 0,
     pageSize: 10,
   });
   const [totalCount, setTotalCount] = useState(0);
+  const [search] = useQueryState("search");
   const [customerType] = useQueryState("customerType");
   const [customerName] = useQueryState("customerName");
   const [vehicleModel] = useQueryState("vehicleModel");
@@ -63,7 +63,6 @@ export default function DataTable({ columns }) {
   const [dueDays] = useQueryState("dueDays");
   const [idNo] = useQueryState("idNo");
   const [filterOptionsData, setFilterOptionsData] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     localStorage.setItem("columnSizing", JSON.stringify(columnSizing));
@@ -112,6 +111,7 @@ export default function DataTable({ columns }) {
 
     fetchData();
   }, [
+    search,
     customerType,
     customerName,
     vehicleModel,

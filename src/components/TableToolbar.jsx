@@ -9,10 +9,7 @@ export default function TableToolbar({ table, columns }) {
   return (
     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
       <div className="w-md">
-        <GlobalSearch
-          globalFilter={table.getState().globalFilter}
-          setGlobalFilter={table.setGlobalFilter}
-        />
+        <GlobalSearch />
       </div>
 
       <div className="flex items-center gap-2">

@@ -8,8 +8,8 @@ export const fetchBills = async ({
   limit = 30,
   sortBy,
   order,
-  filters = {},
   search,
+  filters = {},
 }) => {
   const params = {
     page,

@@ -1,31 +1,48 @@
-"use client";
-
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { useQueryState } from "nuqs";
-import { useEffect, useState } from "react";
-import { debounce } from "lodash";
+import { useState } from "react";
+import { Search, X } from "lucide-react";
 
 export default function GlobalSearch() {
-  const [searchParam, setSearchParam] = useQueryState("search");
-  const [value, setValue] = useState(searchParam || "");
+  const [search, setSearch] = useQueryState("search");
+  const [value, setValue] = useState(search || "");
 
-  // Debounce handler
-  const debouncedSetSearch = debounce((val) => {
-    setSearchParam(val === "" ? null : val);
-  }, 500); // 500ms debounce
+  const handleSearch = () => {
+    setSearch(value || null);
+  };
 
-  useEffect(() => {
-    debouncedSetSearch(value);
-    return () => debouncedSetSearch.cancel();
-  }, [value]);
+  const handleClear = () => {
+    setValue("");
+    setSearch(null);
+  };
 
   return (
-    <div className="w-full">
-      <Input
-        placeholder="Global Search..."
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-      />
+    <div className="flex items-center gap-2">
+      <div className="relative w-full">
+        <Input
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          placeholder="Search . . ."
+          onKeyDown={(e) => {
+            if (e.key === "Enter") handleSearch();
+          }}
+          className="pr-8" // Add padding-right so clear icon doesn't overlap text
+        />
+        {value && (
+          <button
+            type="button"
+            onClick={handleClear}
+            className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        )}
+      </div>
+      <Button onClick={handleSearch} variant="outline" className="shrink-0">
+        <Search className="w-4 h-4 mr-1" />
+        Search
+      </Button>
     </div>
   );
 }

@@ -79,7 +79,7 @@ export default function ColumnFilters({ table, filterOptions }) {
   return (
     // <div className="grid grid-cols-2 md:grid-cols-10 gap-2 items-end">
     <div className="flex gap-2 flex-wrap">
-      {/* ✅ Date Picker */}
+      {/* Date Picker */}
       <div className="flex flex-col min-w-[150px]">
         <label className="text-sm mb-1">Date</label>
         <Popover>
@@ -122,7 +122,7 @@ export default function ColumnFilters({ table, filterOptions }) {
 
       {/* Due Days */}
       <div className="flex flex-col min-w-[150px]">
-        <label className="text-sm mb-1">Due Days (≤)</label>
+        <label className="text-sm mb-1">Due Days</label>
         <Input
           type="number"
           placeholder="Enter days"
