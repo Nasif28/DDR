@@ -8,6 +8,7 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
+  CommandSeparator,
 } from "./ui/command";
 import React from "react";
 import { cn } from "@/lib/utils";
@@ -23,6 +24,12 @@ export default function ColumnVisibilityToggle({ table }) {
         ),
     [table]
   );
+
+  const allVisible = columns.every((col) => col.getIsVisible());
+  const toggleAll = () => {
+    columns.forEach((col) => col.toggleVisibility(!allVisible));
+  };
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -33,16 +40,18 @@ export default function ColumnVisibilityToggle({ table }) {
           size="sm"
           className="ml-auto hidden h-8 lg:flex"
         >
-          <Settings2 />
+          <Settings2 className="mr-1" />
           View
-          <ChevronsUpDown className="ml-auto opacity-50" />
+          <ChevronsUpDown className="ml-1 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="end" className="w-44 p-0">
+
+      <PopoverContent align="end" className=" w-44 p-0">
         <Command>
           <CommandInput placeholder="Search columns..." />
           <CommandList>
             <CommandEmpty>No columns found.</CommandEmpty>
+
             <CommandGroup>
               {columns.map((column) => (
                 <CommandItem
@@ -62,6 +71,14 @@ export default function ColumnVisibilityToggle({ table }) {
                   />
                 </CommandItem>
               ))}
+            </CommandGroup>
+
+            <CommandSeparator />
+
+            <CommandGroup>
+              <CommandItem onSelect={toggleAll}>
+                {allVisible ? "Hide all" : "Show all"}
+              </CommandItem>
             </CommandGroup>
           </CommandList>
         </Command>

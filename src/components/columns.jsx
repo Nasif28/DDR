@@ -66,12 +66,14 @@ export const columns = [
     enableSorting: true,
     enableHiding: true,
     enableColumnFilter: true,
-    enableResizing: true,
+    // enableResizing: true,
+    enableResizing: col.enableResizing !== false,
     size: col.size,
     minSize: 50,
     maxSize: 400,
     meta: {
       defaultSize: col.size,
+      label: col.label,
     },
   })),
 ];

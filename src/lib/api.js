@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const API_URL = "https://681ed227c1c291fa66353a6f.mockapi.io/api/v1/report";
+export const API_URL =
+  "https://681ed227c1c291fa66353a6f.mockapi.io/api/v1/report";
 
 export const fetchBills = async ({
   page = 1,
@@ -12,13 +13,13 @@ export const fetchBills = async ({
   const params = {
     page,
     limit,
-    sortBy,
-    order,
+    ...(sortBy && { sortBy }),
+    ...(order && { order }),
     ...filters,
   };
 
   const res = await axios.get(API_URL, { params });
-  const totalCount = Number(res.headers["x-total-count"] || res.data.length); 
+  const totalCount = Number(res.headers["x-total-count"] || res.data.length);
   return {
     items: res.data,
     totalCount,
