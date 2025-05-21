@@ -19,6 +19,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { useQueryState } from "nuqs";
 import { cn } from "@/lib/utils";
+import { useEffect, useState } from "react";
 
 export default function ColumnFilters({ filterOptions = {} }) {
   const [customerType, setCustomerType] = useQueryState("customerType");
@@ -27,9 +28,32 @@ export default function ColumnFilters({ filterOptions = {} }) {
   const [customerStatus, setCustomerStatus] = useQueryState("customerStatus");
   const [accountHolder, setAccountHolder] = useQueryState("accountHolder");
   const [concernPerson, setConcernPerson] = useQueryState("concernPerson");
+  const [dateRange, setDateRange] = useQueryState("dateRange");
   const [date, setDate] = useQueryState("date");
   const [dueDays, setDueDays] = useQueryState("dueDays");
   const [idNo, setIdNo] = useQueryState("idNo");
+
+  const parsedDateRange = dateRange
+    ? (() => {
+        const [from, to] = dateRange.split(":");
+        return {
+          from: from ? new Date(from) : undefined,
+          to: to ? new Date(to) : undefined,
+        };
+      })()
+    : { from: undefined, to: undefined };
+
+  const [range, setRange] = useState(parsedDateRange);
+
+  useEffect(() => {
+    if (range?.from || range?.to) {
+      const from = range.from?.toISOString().split("T")[0] ?? "";
+      const to = range.to?.toISOString().split("T")[0] ?? "";
+      setDateRange(`${from}:${to}`);
+    } else {
+      setDateRange(null);
+    }
+  }, [range]);
 
   const clearAllFilters = () => {
     setCustomerType(null);
@@ -41,14 +65,16 @@ export default function ColumnFilters({ filterOptions = {} }) {
     setDate(null);
     setDueDays(null);
     setIdNo(null);
+    setDateRange(null);
+    setRange({ from: undefined, to: undefined });
   };
 
   const dropdownFilters = [
     {
-      id: "customerType",
-      label: "Customer Type",
-      value: customerType,
-      setValue: setCustomerType,
+      id: "accountHolder",
+      label: "Account Holder",
+      value: accountHolder,
+      setValue: setAccountHolder,
     },
     {
       id: "customerName",
@@ -56,6 +82,13 @@ export default function ColumnFilters({ filterOptions = {} }) {
       value: customerName,
       setValue: setCustomerName,
     },
+    {
+      id: "customerType",
+      label: "Customer Type",
+      value: customerType,
+      setValue: setCustomerType,
+    },
+
     {
       id: "vehicleModel",
       label: "Vehicle Model",
@@ -68,12 +101,7 @@ export default function ColumnFilters({ filterOptions = {} }) {
       value: customerStatus,
       setValue: setCustomerStatus,
     },
-    {
-      id: "accountHolder",
-      label: "Account Holder",
-      value: accountHolder,
-      setValue: setAccountHolder,
-    },
+
     {
       id: "concernPerson",
       label: "Concern Person",
@@ -114,15 +142,37 @@ export default function ColumnFilters({ filterOptions = {} }) {
         </Popover>
       </div>
 
-      {/* ID No */}
-      <div className="flex flex-col min-w-[120px]">
-        <label className="text-sm mb-1">ID No</label>
-        <Input
-          type="number"
-          placeholder="Enter ID"
-          value={idNo || ""}
-          onChange={(e) => setIdNo(e.target.value || null)}
-        />
+      {/* Date Range Picker */}
+      <div className="flex flex-col min-w-[200px]">
+        <label className="text-sm mb-1">Payment Date</label>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              className="w-full justify-start text-left font-normal"
+            >
+              <CalendarIcon className="mr-2 h-4 w-4" />
+              {range?.from && range?.to ? (
+                `${format(range.from, "yyyy-MM-dd")} → ${format(
+                  range.to,
+                  "yyyy-MM-dd"
+                )}`
+              ) : (
+                <span>Select date </span>
+              )}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="start">
+            <Calendar
+              initialFocus
+              mode="range"
+              defaultMonth={range?.from}
+              selected={range}
+              onSelect={setRange}
+              numberOfMonths={2}
+            />
+          </PopoverContent>
+        </Popover>
       </div>
 
       {/* Due Days */}
@@ -133,6 +183,17 @@ export default function ColumnFilters({ filterOptions = {} }) {
           placeholder="Enter days"
           value={dueDays || ""}
           onChange={(e) => setDueDays(e.target.value || null)}
+        />
+      </div>
+
+      {/* ID No */}
+      <div className="flex flex-col min-w-[120px]">
+        <label className="text-sm mb-1">ID No</label>
+        <Input
+          type="number"
+          placeholder="Enter ID"
+          value={idNo || ""}
+          onChange={(e) => setIdNo(e.target.value || null)}
         />
       </div>
 
